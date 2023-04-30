@@ -16,7 +16,7 @@ RUN . /build/venv/bin/activate && \
 
 # https://developer.nvidia.com/cuda-gpus
 # for a rtx 2060: ARG TORCH_CUDA_ARCH_LIST="7.5"
-ARG TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
+ARG TORCH_CUDA_ARCH_LIST="6.0;6.1;7.0;7.5;8.0;8.6+PTX"
 RUN . /build/venv/bin/activate && \
     python3 setup_cuda.py bdist_wheel -d .
 
@@ -26,7 +26,7 @@ LABEL maintainer="Your Name <your.email@example.com>"
 LABEL description="Docker image for GPTQ-for-LLaMa and Text Generation WebUI"
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y libportaudio2 libasound-dev git python3 python3-pip make g++ && \
+    apt-get install --no-install-recommends -y libportaudio2 libasound-dev git git-lfs python3 python3-pip make g++ && \
     rm -rf /var/lib/apt/lists/*
 
 RUN --mount=type=cache,target=/root/.cache/pip pip3 install virtualenv
@@ -64,5 +64,7 @@ RUN . /app/venv/bin/activate && \
 RUN cp /app/venv/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda118.so /app/venv/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cpu.so
 
 COPY . /app/
-ENV CLI_ARGS=""
-CMD . /app/venv/bin/activate && python3 server.py ${CLI_ARGS}
+
+COPY ./entrypoint.sh /app/entrypoint.sh
+
+ENTRYPOINT [ "/app/entrypoint.sh" ]
