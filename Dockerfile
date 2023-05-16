@@ -65,6 +65,8 @@ RUN cp /app/venv/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda1
 
 COPY . /app/
 
+RUN mkdir /app/models
+
 COPY ./entrypoint.sh /app/entrypoint.sh
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
